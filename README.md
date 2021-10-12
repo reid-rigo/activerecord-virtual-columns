@@ -23,6 +23,11 @@ class Tweet < ActiveRecord::Base
   belongs_to :user
 end
 
+# SELECT *, (SELECT COUNT(*) FROM tweets WHERE user_id = users.id) AS tweet_count
+user = User.with_vcolumns(:tweet_count).find 1
+# loads from memory (does not run query)
+user.tweet_count
+
 ```
 
 ## Contributing

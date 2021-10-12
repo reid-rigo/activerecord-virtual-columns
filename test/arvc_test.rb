@@ -1,6 +1,6 @@
 require "test_helper"
 
-class TestIt < MiniTest::Unit::TestCase
+class ArvcTest < MiniTest::Test
 
   def setup
     user = User.create!(name: 'Tester')
