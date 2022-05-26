@@ -20,18 +20,29 @@ module ActiveRecord
     end
 
     class_methods do
-      def virtual_column(name, params = { scope: nil, method: nil })
+      def virtual_column(name, params = { scope: nil, method: nil, transform: nil })
         virtual_columns[name] = params[:scope]
 
         define_method(name) do
           if has_attribute?(name)
-            self[name]
-          else
+            if params[:transform]
+              params[:transform].call self[name]
+            else
+              self[name]
+            end
+          elsif params[:method]
             instance_exec(&params[:method])
+          else
+            raise MethodNotImplementedError.new(name)
           end
         end
       end
     end
 
+    class MethodNotImplementedError < StandardError
+      def initialize(column)
+        super("#{column} has no method provided - you must use the scope")
+      end
+    end
   end
 end
